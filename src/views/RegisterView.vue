@@ -16,15 +16,16 @@ div.view
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import FormErrors from '@/model/auth/FormErrors';
+import FormAuthErrors from '@/model/auth/FormAuthErrors';
 import { mapMutations } from 'vuex';
+import Auth from '@/model/auth/Auth';
 
 export default defineComponent({
     data() {
         return {
             email: '',
             password: '',
-            errors: new FormErrors(),
+            errors: new FormAuthErrors(),
             api: axios.create({
                 baseURL: 'http://localhost:8080/auth/register',
                 headers: {
@@ -35,31 +36,17 @@ export default defineComponent({
     },
     methods: {
         ...mapMutations(['login']),
-        attemptLogin(){
-            this.api.post('/auth/login', {
-                email: this.email,
-                password: this.password,
-            }).then(response => {
-                this.errors = new FormErrors();
-                this.login(response.data.user);
-                this.$router.push('/');
-            }).catch(error => {
-                if(error.response.status === 400){
-                    this.errors = new FormErrors(error.response.data);
-                }
-            });
-        },
         register(){
-            this.api.post('/', {
+            this.api.post('/', new Auth({
                 email: this.email,
                 password: this.password,
-            }).then(response => {
-                this.errors = new FormErrors();
+            })).then(response => {
+                this.errors = new FormAuthErrors();
                 this.login(response.data.user);
                 this.$router.push('/');
             }).catch(error => {
                 if(error.response.status === 400){
-                    this.errors = new FormErrors(error.response.data);
+                    this.errors = new FormAuthErrors(error.response.data);
                 }
             });
         },

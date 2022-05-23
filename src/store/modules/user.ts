@@ -11,6 +11,7 @@ const userStore:  Module<UserState, RootState> = {
     },
     getters: {
         isLoggedIn: (state: UserState) => !!state.user,
+        getCart: (state: UserState) => state.user ? state.user.cart : [],
     },
 }
 

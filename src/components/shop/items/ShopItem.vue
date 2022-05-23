@@ -1,23 +1,45 @@
 <template lang="pug">
-div.shopItem
+div.shopItem(v-if="item")
     div.title
         p {{item.name}}
     div.content
         p {{item.description}}
     div.footer
         span.price {{item.price}} $
-        p.buttonOrder(@click="$emit('order', item)") order
+        p.button(@click="handleClick" :class="`${isLoading ? 'disabled' : ''} ${actionString}`") {{actionString}}
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ShopItem from '@/model/shop/ShopItem'
+import ShopItemAction from '@/model/shop/ShopItemAction'
 
 export default defineComponent({
     props: {
         item: {
-            type: ShopItem,
-            required: true,
+            type: Object as () => ShopItem,
+        },
+        isLoading: {
+            type: Boolean,
+            default: false,
+        },
+        action: {
+            type: Number as () => ShopItemAction,
+            required: true
         }
+    },
+    methods: {
+        handleClick(){
+            this.$emit(this.actionString, this.item);
+        }
+    },
+    computed: {
+        actionString(){
+            switch(this.action){
+                case ShopItemAction.ORDER: return 'order';
+                case ShopItemAction.REMOVE: return 'remove';
+                default: return 'order';
+            }
+        },
     }
 })
 </script>
@@ -25,12 +47,10 @@ export default defineComponent({
 .shopItem
     display: flex
     flex-direction: column
-    width: 180px
-    height: 180px
+    width: 200px
+    height: 200px
     border: 2px solid black
-    margin-right: 24px
-    &:last-of-type
-        margin-right: 0
+
 .title
     border-bottom: 2px solid black
     padding: 8px 16px
@@ -39,7 +59,10 @@ export default defineComponent({
 .content
     display: flex
     flex: 1
-    padding: 24px
+    overflow-y: scroll
+    overflow-x: hidden
+    word-wrap: anywhere
+    padding: 8px 16px
 .footer
     display: flex
     flex-direction: row
@@ -51,7 +74,13 @@ export default defineComponent({
 .price
     color: #0a0
 
-.buttonOrder
-    color: blue
+.button
     cursor: pointer
+    &.remove
+        color: red
+    &.order
+        color: blue
+    &.disabled
+        cursor: default
+        color: gray
 </style>

@@ -20,6 +20,9 @@ export default defineComponent({
   margin: 0px
   user-select: none
 
+input, textarea
+  user-select: auto
+
 body
   min-height: 100vh
   width: 100vw
