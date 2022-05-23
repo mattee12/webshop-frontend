@@ -1,21 +1,25 @@
 <template lang="pug">
 div.appbar
     h1 Webshop
-    button-cart.buttonCart(v-if="!isAdmin")
+    div.buttons
+        button-cart.buttonCart(v-if="!isAdmin")
+        button-logout.buttonLogout
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ButtonCart from './button/ButtonCart.vue'
 import User from '@/model/user/User'
+import ButtonLogout from './button/ButtonLogout.vue'
 
 export default defineComponent({
     components: {
         ButtonCart,
+        ButtonLogout,
     },
     props: [],
     computed: {
         user(): User{return this.$store.state.userStore.user;},
-        isAdmin(){return this.user.role == 'admin';}
+        isAdmin(){return this.user?.role == 'admin';}
     },
 })
 </script>
@@ -37,6 +41,11 @@ export default defineComponent({
     font-weight: normal
 
 .buttonCart
+    margin-right: 24px
+
+.buttons
+    display: flex
+    flex-direction: row
     position: absolute
     right: 32px
 </style>

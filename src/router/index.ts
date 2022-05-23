@@ -29,6 +29,14 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/cart',
+    name: 'cart',
+    component: () => import('../views/CartView.vue'),
+    meta: {
+      auth: true
+    }
+  },
+  {
     path: "/:catchAll(.*)",
     name:'404',
     component: HomeView

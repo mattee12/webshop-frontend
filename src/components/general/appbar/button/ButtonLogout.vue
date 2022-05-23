@@ -1,15 +1,16 @@
 <template lang="pug">
-p(@click="handleCart") cart
+p(@click="handleLogout") logout
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import HelperAuth from '@/helper/HelperAuth'
 
 export default defineComponent({
     methods: {
-        handleCart(){
-            this.$router.push('/cart');
-        },
-    },
+        handleLogout(){
+            HelperAuth.logout();
+        }
+    }
 })
 </script>
 <style lang="stylus" scoped>

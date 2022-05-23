@@ -1,7 +1,7 @@
 <template lang="pug">
 div.home
   app-bar
-  list-shop-item.itemList(:items="items")
+  list-shop-item.itemList(:items="items" @items-changed="itemsChanged")
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -18,7 +18,7 @@ export default defineComponent({
   },
   data() {
     return {
-      items: [],
+      items: [] as  ShopItem[],
       api: axios.create({
         baseURL: 'http://localhost:8080/items',
       }),
@@ -34,6 +34,11 @@ export default defineComponent({
       return this.$store.state.userStore.user;
     },
   },
+  methods: {
+    itemsChanged(items: ShopItem[]){
+      this.items = items;
+    },
+  }
 });
 </script>
 <style lang="stylus" scoped>

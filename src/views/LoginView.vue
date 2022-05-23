@@ -13,21 +13,23 @@ div.view
             div.buttonWrapper
                 p.button(@click="register") register
                 div(style="width: 24px;")
-                p.button(@click="attemptLogin") login
+                p.button(@click="handleLoginClicked") login
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
-import FormErrors from '@/model/auth/FormErrors';
+import FormAuthErrors from '@/model/auth/FormAuthErrors';
 import { mapMutations } from 'vuex';
 import Auth from '@/model/auth/Auth';
+import HelperAuth from '@/helper/HelperAuth';
+import ResponseAuth from '@/model/auth/ResponseAuth';
 
 export default defineComponent({
     data() {
         return {
             email: '',
             password: '',
-            errors: new FormErrors(),
+            errors: new FormAuthErrors(),
             api: axios.create({
                 baseURL: 'http://localhost:8080/auth/login',
                 headers: {
@@ -38,19 +40,10 @@ export default defineComponent({
     },
     methods: {
         ...mapMutations(['login']),
-        attemptLogin(){
-            const auth = new Auth({
-                email: this.email,
-                password: this.password,
-            });
-            this.api.post('/', auth).then(response => {
-                this.errors = new FormErrors();
-                this.login(response.data.user);
-                this.$router.push('/');
-            }).catch(error => {
-                if(error.response.status === 400){
-                    this.errors = new FormErrors(error.response.data);
-                }
+        handleLoginClicked(){
+            HelperAuth.attemptLogin(new Auth({email: this.email, password: this.password})).then( (response: ResponseAuth) => {
+                if(response.isSuccessful()){this.$router.push('/'); return}
+                this.errors = response.getErrors();
             });
         },
         register(){

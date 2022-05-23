@@ -17,13 +17,12 @@ div.view
             div.buttonWrapper
                 p.buttonCancel(@click="cancel") cancel
                 div(style="width: 24px;")
-                p.buttonLogin(@click="attemptCreate") login
+                p.buttonCreate(@click="attemptCreate") create
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
 import axios from 'axios';
 import FormItemAddErrors from '@/model/shop/FormItemAddErrors';
-import { mapMutations } from 'vuex';
 import AppBar from '@/components/general/appbar/AppBar.vue';
 import ShopItem from '@/model/shop/ShopItem';
 
@@ -46,11 +45,9 @@ export default defineComponent({
         AppBar,
     },
     methods: {
-        ...mapMutations(['login']),
         attemptCreate(){
-            this.api.post('/', this.item).then(response => {
+            this.api.post('/', this.item).then(() => {
                 this.errors = new FormItemAddErrors();
-                console.log(response);
                 this.$router.push('/');
             }).catch(error => {
                 if(error.response.status === 400){
@@ -132,7 +129,7 @@ export default defineComponent({
     color:red
     font-size: 24px
     cursor: pointer
-.buttonLogin
+.buttonCreate
     color:blue
     font-size: 24px
     cursor: pointer
