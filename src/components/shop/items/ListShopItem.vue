@@ -38,10 +38,10 @@ export default defineComponent({
             itemsPerPage: 6,
             pagesInFooter: 3,
             cart: this.getCart() as Cart,
-            token: localStorage.getItem('token'),
             api: axios.create({
                 baseURL: 'http://localhost:8080',
             }),
+            token: localStorage.getItem('token')?.toString() ?? '',
             isLoading: false,
         }
     },
@@ -66,17 +66,25 @@ export default defineComponent({
         handleOrder(item: ShopItem){
             this.cart.items.push(item);
             this.isLoading = true;
-            this.api.post(`/cart/${this.token}/${item.id}`).then(response => {
+            this.api.post(`/cart/${item.id}`, null, {
+                headers: {
+                    'access-token': this.token,
+                }
+            }).then(response => {
                 alert('Item added to cart');
                 this.cart = response.data;
                 this.isLoading = false;
             });
         },
         handleRemove(item: ShopItem){
-            this.api.delete(`/items/${item.id}`).then(response => {
+            this.api.delete(`/item/${item.id}`, {
+                headers: {
+                    'access-token': this.token,
+                }
+            }).then(response => {
                 this.$emit('items-changed', response.data);
-            }).catch(() => {
-                alert('Error removing item');
+            }).catch((error) => {
+                console.log(error.response.data)
             });
         }
     }

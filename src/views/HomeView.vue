@@ -20,7 +20,7 @@ export default defineComponent({
     return {
       items: [] as  ShopItem[],
       api: axios.create({
-        baseURL: 'http://localhost:8080/items',
+        baseURL: 'http://localhost:8080/item',
       }),
     };
   },
