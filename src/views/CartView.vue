@@ -26,7 +26,7 @@ export default defineComponent({
             api: axios.create({
                 baseURL: 'http://localhost:8080/cart',
             }),
-            token: localStorage.getItem('token'),
+            token: localStorage.getItem('token')?.toString() ?? '',
             isLoading: false,
             action: ShopItemAction.REMOVE,
         }
@@ -35,14 +35,22 @@ export default defineComponent({
         ...mapGetters(['getCart']),
         removeItem(item: ShopItem){
             this.isLoading = true;
-            this.api.delete(`/${this.token}/${item.id}`).then(response => {
+            this.api.delete(`/${item.id}`, {
+                headers: {
+                    'access-token': this.token,
+                }
+            }).then(response => {
                 this.cart = response.data;
                 this.isLoading = false;
             });
         }
     },
     created(){
-        this.api.get(`/${this.token}`).then(response => {
+        this.api.get(`/`, {
+            headers: {
+                'access-token': this.token,
+            }
+        }).then(response => {
             this.cart = response.data;
         });
     },
