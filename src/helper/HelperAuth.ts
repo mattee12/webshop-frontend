@@ -12,6 +12,7 @@ export default class HelperAuth {
         const response: ResponseAuth = new ResponseAuth();
         await api.post('/login', auth).then(({ data }) => {
             response.setUser(data.user);
+            document.cookie = 'access-token=' + data.token;
             localStorage.setItem('token', data.token);
             store.commit('login', data.user);
         }).catch( error => {
@@ -26,11 +27,13 @@ export default class HelperAuth {
         if(store.getters.isLoggedIn){return true}
 
         const token = localStorage.getItem('token');
+        
         if(!token){return false}
         return (await HelperAuth.attemptLogin(new Auth({token}))).isSuccessful()
     }
     static async logout() {
         localStorage.removeItem('token');
+        document.cookie = "access-token=;expires=Thu, 01 Jan 1970 00:00:00 GMT"
         store.commit('logout');
         router.push('/login');
     }
