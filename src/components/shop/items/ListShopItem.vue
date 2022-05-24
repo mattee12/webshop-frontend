@@ -1,7 +1,7 @@
 <template lang="pug">
 div.list
     div.title
-        h1 Items
+        h1 {{title}}
         p.createButton(v-if="isAdmin" @click="addItem") add item
     pager-container(
         v-if="items.length > 0"
@@ -11,7 +11,7 @@ div.list
         :page="page"
         @page-selected="handlePageSelect")
         div.content
-            shop-item-component(v-for="item in pageItems" :item="item" @order="()=>{handleOrder(item)}" @remove="()=>{handleRemove(item)}" :action="action" :is-loading="isLoading")
+            shop-item-component(v-for="item in pageItems" :item="item" @order="()=>{handleOrder(item)}" @action="handleAction" @remove="()=>{handleRemove(item)}" :action="action" :loading="loading")
     div.placeholder(v-else)
         p No items to show.
 </template>
@@ -20,9 +20,8 @@ import { defineComponent } from 'vue'
 import ShopItem from '@/model/shop/ShopItem';
 import ShopItemComponent from '@/components/shop/items/ShopItem.vue';
 import PagerContainer from '@/components/general/pager/PagerContainer.vue';
-import { mapGetters } from 'vuex';
 import axios from 'axios';
-import Cart from '@/model/user/Cart'
+import User from '@/model/user/User'
 import ShopItemAction from '@/model/shop/ShopItemAction';
 
 export default defineComponent({
@@ -30,6 +29,18 @@ export default defineComponent({
         items: {
             type: Array as () => ShopItem[],
             required: true,
+        },
+        title: {
+            type: String,
+            default: "items",
+        },
+        action: {
+            type: Number as () => ShopItemAction,
+            required: true,
+        },
+        loading: {
+            type: Boolean,
+            default: false,
         }
     },
     data() {
@@ -37,48 +48,38 @@ export default defineComponent({
             page: 1,
             itemsPerPage: 6,
             pagesInFooter: 3,
-            cart: this.getCart() as Cart,
             api: axios.create({
                 baseURL: 'http://localhost:8080',
                 withCredentials: true,
             }),
-            isLoading: false,
         }
     },
     computed: {
-        user(){return this.$store.state.userStore.user;},
-        isAdmin(){return this.user?.role == 'admin';},
-        pageItems(){return this.items.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);},
-        action(){return this.isAdmin? ShopItemAction.REMOVE: ShopItemAction.ORDER;},
+        user(): User {return this.$store.state.userStore.user;},
+        isAdmin(): boolean {return this.user?.role == 'admin';},
+        pageItems(): ShopItem[] {return this.items.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);},
+        actionString(): string {
+            switch(this.action){
+                case ShopItemAction.ORDER: return 'order';
+                case ShopItemAction.REMOVE: return 'remove';
+                default: return 'order';
+            }
+        },
     },
     components: {
         ShopItemComponent,
         PagerContainer,
     },
     methods: {
-        ...mapGetters(['getCart']),
         addItem(){
             this.$router.push('/add');
         },
         handlePageSelect(page: number){
             this.page = page;
         },
-        handleOrder(item: ShopItem){
-            this.cart.items.push(item);
-            this.isLoading = true;
-            this.api.post(`/cart/${item.id}`).then(response => {
-                alert('Item added to cart');
-                this.cart = response.data;
-                this.isLoading = false;
-            });
+        handleAction(item: ShopItem){
+            this.$emit(this.actionString, item);
         },
-        handleRemove(item: ShopItem){
-            this.api.delete(`/item/${item.id}`).then(response => {
-                this.$emit('items-changed', response.data);
-            }).catch((error) => {
-                console.log(error.response.data)
-            });
-        }
     }
 })
 </script>
