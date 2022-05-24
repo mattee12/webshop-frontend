@@ -34,11 +34,11 @@ export default defineComponent({
             errors: new FormItemAddErrors(),
             api: axios.create({
                 baseURL: 'http://localhost:8080/item',
+                withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
                 },
             }),
-            token: localStorage.getItem('token')?.toString() ?? '',
             item: new ShopItem(),
         }
     },
@@ -47,11 +47,7 @@ export default defineComponent({
     },
     methods: {
         attemptCreate(){
-            this.api.post('/', this.item, {
-                headers: {
-                    'access-token': this.token,
-                }
-            }).then(() => {
+            this.api.post('/', this.item).then(() => {
                 this.errors = new FormItemAddErrors();
                 this.$router.push('/');
             }).catch(error => {
