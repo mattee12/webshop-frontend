@@ -1,6 +1,6 @@
 <template lang="pug">
 div.appbar
-    h1 Webshop
+    h1(@click="toHome") Webshop
     div.buttons
         button-cart.buttonCart(v-if="!isAdmin")
         button-logout.buttonLogout
@@ -21,6 +21,11 @@ export default defineComponent({
         user(): User{return this.$store.state.userStore.user;},
         isAdmin(){return this.user?.role == 'admin';}
     },
+    methods: {
+        toHome(){
+            this.$router.push('/');
+        },
+    },
 })
 </script>
 <style lang="stylus" scoped>
@@ -39,6 +44,7 @@ export default defineComponent({
 
 .appbar h1
     font-weight: normal
+    cursor: pointer
 
 .buttonCart
     margin-right: 24px

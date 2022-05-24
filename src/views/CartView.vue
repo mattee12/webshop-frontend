@@ -1,10 +1,13 @@
 <template lang="pug">
 div.view
     app-bar
-    div.listContainer(v-if="cart.items.length > 0")
-        shop-item-component(v-for="item in cart.items" :item="item" @remove="removeItem" :action="action" :is-loading="isLoading")
-    div.placeholder(v-else)
-        p Your cart is empty.
+    div.listContainer
+        list-shop-item(
+            :items="cart.items"
+            title="cart"
+            :action="listAction"
+            :loading="isLoading"
+            @remove="handleRemove")
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -14,11 +17,13 @@ import axios from 'axios';
 import ShopItemComponent from '@/components/shop/items/ShopItem.vue';
 import ShopItem from '@/model/shop/ShopItem';
 import ShopItemAction from '@/model/shop/ShopItemAction'
+import ListShopItem from '@/components/shop/items/ListShopItem.vue';
 
 export default defineComponent({
     components: {
         AppBar,
         ShopItemComponent,
+        ListShopItem,
     },
     data() {
         return {
@@ -28,12 +33,12 @@ export default defineComponent({
                 withCredentials: true,
             }),
             isLoading: false,
-            action: ShopItemAction.REMOVE,
+            listAction: ShopItemAction.REMOVE,
         }
     },
     methods: {
         ...mapGetters(['getCart']),
-        removeItem(item: ShopItem){
+        handleRemove(item: ShopItem){
             this.isLoading = true;
             this.api.delete(`/${item.id}`).then(response => {
                 this.cart = response.data;
@@ -50,11 +55,10 @@ export default defineComponent({
 </script>
 <style lang="stylus" scoped>
 .listContainer
-    display: grid
-    grid-template-columns: repeat(6, 1fr)
-    grid-template-rows: repeat(4, 1fr)
-    padding: 64px
-    grid-gap: 16px
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
 
 .placeholder
     display: flex

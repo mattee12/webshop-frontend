@@ -6,7 +6,7 @@ div.shopItem(v-if="item")
         p {{item.description}}
     div.footer
         span.price {{item.price}} $
-        p.button(@click="handleClick" :class="`${isLoading ? 'disabled' : ''} ${actionString}`") {{actionString}}
+        p.button(@click="handleClick" :class="`${loading ? 'disabled' : ''} ${actionString}`") {{actionString}}
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -18,7 +18,7 @@ export default defineComponent({
         item: {
             type: Object as () => ShopItem,
         },
-        isLoading: {
+        loading: {
             type: Boolean,
             default: false,
         },
@@ -29,7 +29,7 @@ export default defineComponent({
     },
     methods: {
         handleClick(){
-            this.$emit(this.actionString, this.item);
+            this.$emit('action', this.item);
         }
     },
     computed: {
