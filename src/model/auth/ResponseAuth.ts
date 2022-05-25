@@ -4,10 +4,7 @@ import FormAuthErrors from './FormAuthErrors';
 export default class ResponseAuth {
     private user?: User;
     private errors?: FormAuthErrors;
-    //a dynamic boolean field (not void) which returns true if user is not undefined
-
-
-    //setters and getters
+    
     public getUser(): User | undefined {
         return this.user;
     }
