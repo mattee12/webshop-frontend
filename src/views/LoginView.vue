@@ -4,16 +4,17 @@ div.view
         div.title
             h1 webshop login
         div.content
-            div.inputWrapper
-                input(type="text" :class="`${errors.email?'invalid':''}`" placeholder="email" v-model="email")
-                p.error {{ errors.email }}
-            div.inputWrapper
-                input(type="password" :class="`${errors.password?'invalid':''}`" placeholder="password" v-model="password")
-                p.error {{ errors.password }}
-            div.buttonWrapper
-                p.button(@click="register") register
-                div(style="width: 24px;")
-                p.button(@click="handleLoginClicked") login
+            form(@submit.prevent="handleLoginClicked")
+                div.inputWrapper
+                    input(type="text" :class="`${errors.email?'invalid':''}`" placeholder="email" v-model="email")
+                    p.error {{ errors.email }}
+                div.inputWrapper
+                    input(type="password" :class="`${errors.password?'invalid':''}`" placeholder="password" v-model="password")
+                    p.error {{ errors.password }}
+                div.buttonWrapper
+                    input.button(type="button" @click="register" value="register")
+                    div(style="width: 24px;")
+                    input.button(type="submit" @click="handleLoginClicked" value="login")
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -74,7 +75,7 @@ export default defineComponent({
     justify-content: center
     flex: 1
 
-.content input
+.content input[type="text"], input[type="password"]
     border: 1px solid black
     border-radius: 0px
     padding: 8px
@@ -110,10 +111,16 @@ export default defineComponent({
     flex-direction: row
     justify-content: center
     align-items: center
+    
 .button
+    background: none
+    border: none
+    outline: none
     color:blue
     font-size: 24px
     cursor: pointer
+    font-family: Avenir, Helvetica, Arial, sans-serif
+    padding: 0px
 
 .error
     font-size: 16px
