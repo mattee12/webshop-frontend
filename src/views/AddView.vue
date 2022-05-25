@@ -5,19 +5,20 @@ div.view
         div.title
             h1 create item
         div.content
-            div.inputWrapper
-                input(type="text" :class="`${errors.name?'invalid':''}`" placeholder="name*" v-model="item.name")
-                p.error {{ errors.name }}
-            div.inputWrapper
-                input(type="number" :class="`${errors.price?'invalid':''}`" placeholder="price* ($)" min="1" v-model="item.price")
-                p.error {{ errors.price }}
-            div.inputWrapper
-                textarea.description(:class="`${errors.description?'invalid':''}`" placeholder="description" v-model="item.description")
-                p.error {{ errors.description }}
-            div.buttonWrapper
-                p.buttonCancel(@click="cancel") cancel
-                div(style="width: 24px;")
-                p.buttonCreate(@click="attemptCreate") create
+            form(@submit.prevent="attemptCreate")
+                div.inputWrapper
+                    input(type="text" :class="`${errors.name?'invalid':''}`" placeholder="name*" v-model="item.name")
+                    p.error {{ errors.name }}
+                div.inputWrapper
+                    input(type="number" :class="`${errors.price?'invalid':''}`" placeholder="price* ($)" min="1" v-model="item.price")
+                    p.error {{ errors.price }}
+                div.inputWrapper
+                    textarea.description(:class="`${errors.description?'invalid':''}`" placeholder="description" v-model="item.description")
+                    p.error {{ errors.description }}
+                div.buttonWrapper
+                    input.button.cancel(type="button" @click="cancel" value="cancel")
+                    div(style="width: 24px;")
+                    input.button.create(type="submit" @click="attemptCreate" value="create")
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -86,7 +87,7 @@ export default defineComponent({
     padding: 24px
 
 .description
-.content input
+.content input[type="text"], input[type="number"]
     border: 1px solid black
     border-radius: 0px
     padding: 8px
@@ -126,14 +127,19 @@ export default defineComponent({
     flex-direction: row
     justify-content: center
     align-items: center
-.buttonCancel
-    color:red
-    font-size: 24px
-    cursor: pointer
-.buttonCreate
+.button
+    background: none
+    border: none
+    outline: none
     color:blue
     font-size: 24px
     cursor: pointer
+    font-family: Avenir, Helvetica, Arial, sans-serif
+    padding: 0px
+    &.create
+        color: blue
+    &.cancel
+        color: red
 
 .description
     resize: none
@@ -144,5 +150,12 @@ export default defineComponent({
     color: red
     margin-top: 4px
     align-self: flex-start
-    height: 18px
+    min-height: 18px
+    max-width: 258px
+    text-align: left
+
+form
+    display: flex
+    flex-direction: column
+    align-items: center
 </style>

@@ -4,14 +4,17 @@ div.view
         div.title
             h1 create account
         div.content
-            div.inputWrapper
-                input(type="text" :class="`${errors.email?'invalid':''}`" placeholder="email" v-model="email")
-                p.error {{ errors.email }}
-            div.inputWrapper
-                input(type="password" :class="`${errors.password?'invalid':''}`" placeholder="password" v-model="password")
-                p.error {{ errors.password }}
-            div.buttonWrapper
-                p.button(@click="register") register
+            form(@submit.prevent="register")
+                div.inputWrapper
+                    input(type="text" :class="`${errors.email?'invalid':''}`" placeholder="email" v-model="email")
+                    p.error {{ errors.email }}
+                div.inputWrapper
+                    input(type="password" :class="`${errors.password?'invalid':''}`" placeholder="password" v-model="password")
+                    p.error {{ errors.password }}
+                div.buttonWrapper
+                    input.button.cancel(type="button" @click="cancel" value="cancel")
+                    div(style="width: 24px;")
+                    input.button.register(type="submit" @click="register" value="register")
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue';
@@ -50,6 +53,9 @@ export default defineComponent({
                 }
             });
         },
+        cancel(){
+            this.$router.push('/');
+        },
     },
 });
 </script>
@@ -75,7 +81,7 @@ export default defineComponent({
     justify-content: center
     flex: 1
 
-.content input
+.content input[type="text"], input[type="password"]
     border: 1px solid black
     border-radius: 0px
     padding: 8px
@@ -112,9 +118,18 @@ export default defineComponent({
     justify-content: center
     align-items: center
 .button
+    background: none
+    border: none
+    outline: none
     color:blue
     font-size: 24px
     cursor: pointer
+    font-family: Avenir, Helvetica, Arial, sans-serif
+    padding: 0px
+    &.register
+        color: blue
+    &.cancel
+        color: red
 
 .error
     font-size: 16px
